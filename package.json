@@ -1,6 +1,6 @@
 {
   "name": "adonisjs-cursor-paginator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cursor-based pagination for AdonisJS Lucid ORM",
   "type": "module",
   "main": "build/index.js",
@@ -11,7 +11,7 @@
       "import": "./build/index.js"
     },
     "./provider": {
-      "types": "./build/provider.d.ts", 
+      "types": "./build/provider.d.ts",
       "import": "./build/provider.js"
     },
     "./commands": {
@@ -21,7 +21,9 @@
   },
   "typesVersions": {
     "*": {
-      "*": ["build/*"]
+      "*": [
+        "build/*"
+      ]
     }
   },
   "bin": {
