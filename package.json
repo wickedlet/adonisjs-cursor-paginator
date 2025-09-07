@@ -1,0 +1,71 @@
+{
+  "name": "adonisjs-cursor-paginator",
+  "version": "1.0.0",
+  "description": "Cursor-based pagination for AdonisJS Lucid ORM",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
+    },
+    "./provider": {
+      "types": "./build/provider.d.ts", 
+      "import": "./build/provider.js"
+    },
+    "./commands": {
+      "types": "./build/commands/setup.d.ts",
+      "import": "./build/commands/setup.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["build/*"]
+    }
+  },
+  "bin": {
+    "adonisjs-cursor-paginator": "./build/bin/setup.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node --loader=ts-node/esm ./tests/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "adonisjs",
+    "lucid",
+    "pagination",
+    "cursor",
+    "orm",
+    "database"
+  ],
+  "author": "wickedlet",
+  "license": "MIT",
+  "peerDependencies": {
+    "@adonisjs/core": "^6.0.0",
+    "@adonisjs/lucid": "^21.0.0"
+  },
+  "devDependencies": {
+    "@adonisjs/core": "^6.0.0",
+    "@adonisjs/lucid": "^21.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wickedlet/adonisjs-cursor-paginator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wickedlet/adonisjs-cursor-paginator/issues"
+  },
+  "homepage": "https://github.com/wickedlet/adonisjs-cursor-paginator#readme"
+}
