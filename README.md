@@ -5,6 +5,8 @@
 
 Cursor-based pagination package for AdonisJS Lucid ORM. Provides efficient pagination for large datasets without the performance issues of offset-based pagination.
 
+> **Note**: This package requires AdonisJS v6 or higher.
+
 ## Features
 
 - 🚀 **High Performance**: Cursor-based pagination scales better than offset-based pagination
@@ -158,74 +160,13 @@ const results = await db.from('users')
 
 ```typescript
 interface CursorPaginationResult<T> {
-  items: T[]           // Array of results
+  data: T[]            // Array of results
   nextCursor?: string  // Cursor for next page (undefined if no more items)
   prevCursor?: string  // Cursor for previous page (undefined if first page)
 }
 ```
 
-### Frontend Integration
-
-#### React Example
-
-```typescript
-import { useState, useEffect } from 'react'
-
-function UserList() {
-  const [users, setUsers] = useState([])
-  const [nextCursor, setNextCursor] = useState(null)
-  const [prevCursor, setPrevCursor] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-  const fetchUsers = async (cursor = null) => {
-    setLoading(true)
-    try {
-      const response = await fetch(`/api/users?cursor=${cursor || ''}`)
-      const data = await response.json()
-      
-      setUsers(data.items)
-      setNextCursor(data.nextCursor)
-      setPrevCursor(data.prevCursor)
-    } catch (error) {
-      console.error('Error fetching users:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchUsers()
-  }, [])
-
-  return (
-    <div>
-      <div className="users">
-        {users.map(user => (
-          <div key={user.id}>{user.name}</div>
-        ))}
-      </div>
-      
-      <div className="pagination">
-        <button 
-          onClick={() => fetchUsers(prevCursor)}
-          disabled={!prevCursor || loading}
-        >
-          Previous
-        </button>
-        
-        <button 
-          onClick={() => fetchUsers(nextCursor)}
-          disabled={!nextCursor || loading}
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  )
-}
-```
-
-#### Controller Example
+### Controller Example
 
 ```typescript
 import type { HttpContext } from '@adonisjs/core/http'
@@ -236,17 +177,13 @@ export default class UsersController {
     const cursor = request.input('cursor')
     const limit = request.input('limit', 10)
 
-    const paginator = await User.query()
+    const result = await User.query()
       .where('active', true)
       .orderBy('created_at', 'desc')
       .orderBy('id', 'desc')
       .cursorPaginate(limit, cursor)
 
-    return response.json({
-      items: paginator.items,
-      nextCursor: paginator.nextCursor,
-      prevCursor: paginator.prevCursor
-    })
+    return response.json(result)
   }
 }
 ```
@@ -406,6 +343,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- 📖 [Documentation](https://github.com/yourusername/adonisjs-cursor-paginator#readme)
-- 🐛 [Issue Tracker](https://github.com/yourusername/adonisjs-cursor-paginator/issues)
-- 💬 [Discussions](https://github.com/yourusername/adonisjs-cursor-paginator/discussions)
+- 📖 [Documentation](https://github.com/wickedlet/adonisjs-cursor-paginator#readme)
+- 🐛 [Issue Tracker](https://github.com/wickedlet/adonisjs-cursor-paginator/issues)
+- 💬 [Discussions](https://github.com/wickedlet/adonisjs-cursor-paginator/discussions)
