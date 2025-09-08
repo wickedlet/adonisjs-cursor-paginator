@@ -133,23 +133,50 @@ async function updateAdonisrc() {
     return
   }
 
-  // Find providers array and add our provider
-  const providerRegex = /(providers:\s*\[[\s\S]*?)(\s*\]\s*,?)/
-  const match = content.match(providerRegex)
+  // Find the last import line in providers array and insert after it
+  const lines = content.split('\n')
+  let insertIndex = -1
+  let inProvidersArray = false
+  let arrayDepth = 0
   
-  if (!match) {
-    console.error('❌ Could not find providers array in adonisrc.ts')
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+    
+    // Start of providers array
+    if (line.includes('providers: [')) {
+      inProvidersArray = true
+      arrayDepth = 1
+      continue
+    }
+    
+    if (inProvidersArray) {
+      // Count brackets and braces to track nesting
+      for (const char of line) {
+        if (char === '[' || char === '{') arrayDepth++
+        if (char === ']' || char === '}') arrayDepth--
+      }
+      
+      // If we're back to depth 1 and see closing ], this is the end of providers array
+      if (arrayDepth === 0 && line.includes('],')) {
+        insertIndex = i // Insert right before this closing line
+        break
+      }
+      
+      // If this line has an import and we're at the top level of providers array
+      if (arrayDepth === 1 && line.includes("() => import(") && line.includes("'),")) {
+        insertIndex = i + 1 // Remember this position, we'll insert after the last import
+      }
+    }
+  }
+  
+  if (insertIndex === -1) {
+    console.error('❌ Could not find suitable position in providers array')
     throw new Error('Invalid adonisrc.ts format')
   }
-
-  const beforeClosing = match[1]
-  const closing = match[2]
   
-  // Add our provider before the closing bracket
-  const newProvider = "\n    () => import('#providers/cursor_paginator_provider'),"
-  const updatedProviders = beforeClosing + newProvider + closing
-  
-  content = content.replace(providerRegex, updatedProviders)
+  // Insert our provider at the found position
+  lines.splice(insertIndex, 0, "    () => import('#providers/cursor_paginator_provider'),")
+  content = lines.join('\n')
   
   await writeFile(adonisrcFile, content, 'utf-8')
   console.log('✅ Updated adonisrc.ts with cursor paginator provider')
